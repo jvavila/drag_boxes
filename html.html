@@ -16,6 +16,9 @@
 			display: inline-block;
 			background: #000;
 		}
+		ul li.opacity {
+			opacity: 0.1;
+		}
 		ul li:hover {
 			cursor: move;
 		}
@@ -25,13 +28,13 @@
 
 		}
 		ul li.primeiro {
-			background: #ccc;
+			background: #FF0000;
 		}
 		ul li.segundo {
-			background: #333;
+			background: #FF7F00;
 		}
 		ul li.terceiro {
-			background: #f4f4f4;
+			background: #00FF7F;
 		}
 		ul li.quarto {
 			background: #ddd;
@@ -40,10 +43,10 @@
 </head>
 <body>	
 	<ul id="pai">
-		<li id="primeiro" class="primeiro box"></li>
-		<li id="segundo" class="segundo box"></li>
-		<li id="terceiro" class="terceiro box"></li>
-		<li id="quarto" class="quarto box"></li>
+		<li id="primeiro" class="primeiro box">BOX 1</li>
+		<li id="segundo" class="segundo box">BOX2 </li>
+		<li id="terceiro" class="terceiro box">BOX 3</li>
+		<li id="quarto" class="quarto box">BOX 4</li>
 	</ul>
 	<script>
 		$(function(){
@@ -56,27 +59,36 @@
 					this.clone(el);
 				},
 				this.clone = function(el) {
-					var newLi = document.createElement("li"),
-						pai = document.getElementById("pai"),
-						atual = document.getElementById(el.id);					
-					newLi.setAttribute("class", "novaLi");				
-					pai.insertBefore(newLi, atual); 
-					this.drag(el, cursorX, cursorY)
+					// var newLi = document.createElement("li"),
+					pai = document.getElementById("pai"),
+					atual = document.getElementById(el.id);					
+					//newLi.setAttribute("class", "novaLi");				
+					// pai.insertBefore(newLi, atual); 
+					
+					var newLi = $(el).clone();
+					$(atual).addClass("opacity");
+					newLi.addClass("novaLi");
+					
+					$(pai).find(el).after(newLi);
+					
+					// this.drag(el, cursorX, cursorY)
 				},
-				this.drag = function(x, y) {
+				this.drag = function(el, x, y) {
+					var widthLi = $(el).innerWidth();
 					var $li = $(".novaLi");
-					console.log(x);
+					
 					$li.css({
-						left: x-10, 
+						left: x-widthLi, 
 					
 					});
 				},
 				this.end = function() {
 					
 				},
-				this.mouseup = function() {
-
+				this.mouseup = function(e) {
+					
 					$("#pai").each(function(){
+						$(this).find("li").removeClass("opacity");
 						$(this).find("li.novaLi").remove();
 					})
 				}
@@ -85,24 +97,24 @@
 			var lis = document.querySelectorAll("li.box");
 			for(var x=0; x<lis.length; x++) {
 				lis[x].addEventListener("mousedown", function(e){
-					cursorX = e.pageX;
-					cursorY = e.pageY;
+						
 					var acoes2 = new acoes(this);			
-					acoes2.init(this, cursorX, cursorY);
-					var x = e.pageX;
-					acoes2.drag(x);
+					acoes2.init(this);
+					
+					$("body").mousemove(function(e){
+						cursorX = e.pageX;
+						cursorY = e.pageY;
+						var acoes2 = new acoes(this);				
+						acoes2.drag(this, cursorX, cursorY);					
+					});
+					
 					
 				});
 			}
 
-			for(var x=0; x<lis.length; x++) {
-				lis[x].addEventListener("mousemove", function(e){
-					cursorX = e.pageX;
-					cursorY = e.pageY;
-					var acoes2 = new acoes(this);				
-					acoes2.drag(cursorX, cursorY);					
-				});
-			}
+			
+			
+			
 			$("body").mouseup(function(e){
 				
 				var acoes2 = new acoes(this);		
