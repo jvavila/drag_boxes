@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>callback</title>
+	<link rel="stylesheet" href="">
+	<script src="https://code.jquery.com/jquery-1.12.2.min.js"></script>
+	<style>
+		ul {
+			position: relative;
+		}
+		ul li {
+			width: 200px;
+			height:90px;
+			display: inline-block;
+			background: #000;
+		}
+		ul li:hover {
+			cursor: move;
+		}
+		ul li.novaLi {
+			position: absolute;
+			top: 0;
+
+		}
+		ul li.primeiro {
+			background: #ccc;
+		}
+		ul li.segundo {
+			background: #333;
+		}
+		ul li.terceiro {
+			background: #f4f4f4;
+		}
+		ul li.quarto {
+			background: #ddd;
+		}
+	</style>
+</head>
+<body>	
+	<ul id="pai">
+		<li id="primeiro" class="primeiro box"></li>
+		<li id="segundo" class="segundo box"></li>
+		<li id="terceiro" class="terceiro box"></li>
+		<li id="quarto" class="quarto box"></li>
+	</ul>
+	<script>
+		$(function(){
+			function acoes() {
+				this.elemento = function(el) {
+					
+				},
+				this.init = function(el) {
+					this.elemento(el);
+					this.clone(el);
+				},
+				this.clone = function(el) {
+					var newLi = document.createElement("li"),
+						pai = document.getElementById("pai"),
+						atual = document.getElementById(el.id);					
+					newLi.setAttribute("class", "novaLi");				
+					pai.insertBefore(newLi, atual); 
+					this.drag(el, cursorX, cursorY)
+				},
+				this.drag = function(x, y) {
+					var $li = $(".novaLi");
+					console.log(x);
+					$li.css({
+						left: x-10, 
+					
+					});
+				},
+				this.end = function() {
+					
+				},
+				this.mouseup = function() {
+
+					$("#pai").each(function(){
+						$(this).find("li.novaLi").remove();
+					})
+				}
+			}
+					
+			var lis = document.querySelectorAll("li.box");
+			for(var x=0; x<lis.length; x++) {
+				lis[x].addEventListener("mousedown", function(e){
+					cursorX = e.pageX;
+					cursorY = e.pageY;
+					var acoes2 = new acoes(this);			
+					acoes2.init(this, cursorX, cursorY);
+					var x = e.pageX;
+					acoes2.drag(x);
+					
+				});
+			}
+
+			for(var x=0; x<lis.length; x++) {
+				lis[x].addEventListener("mousemove", function(e){
+					cursorX = e.pageX;
+					cursorY = e.pageY;
+					var acoes2 = new acoes(this);				
+					acoes2.drag(cursorX, cursorY);					
+				});
+			}
+			$("body").mouseup(function(e){
+				
+				var acoes2 = new acoes(this);		
+				acoes2.mouseup();
+
+				
+			});
+			
+		})		
+	</script>
+</body>
+</html>
